@@ -13,6 +13,7 @@ public class QuizActivity extends AppCompatActivity {
     private Button mTrueButton;
     private Button mFalseButton;
     private Button mNextButton;
+    private Button mPreviousButton;
     private TextView mQuestionTextView;
 
     private Question[] mQuestionBank = new Question[] {
@@ -38,12 +39,26 @@ public class QuizActivity extends AppCompatActivity {
         mTrueButton = (Button)findViewById(R.id.true_button);
         mFalseButton = (Button)findViewById(R.id.false_button);
         mNextButton = (Button)findViewById(R.id.next_button);
+        mPreviousButton = (Button)findViewById(R.id.previous_button);
 
         mTrueButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
 
                 checkAnswer(true);
+            }
+        });
+
+        mQuestionTextView.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if(mCurrentIndex == (mQuestionBank.length-1)){
+                    mCurrentIndex = 0;
+                    updateQuestion();
+                } else {
+                    mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+                    updateQuestion();
+                }
             }
         });
 
@@ -55,17 +70,36 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
 
+        mPreviousButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if(mCurrentIndex == 0)
+                {
+                    mCurrentIndex = mQuestionBank.length -1;
+                    updateQuestion();
+                } else {
+                    mCurrentIndex = (mCurrentIndex - 1) % mQuestionBank.length;
+                    updateQuestion();
+                }
+            }
+        });
+
         mNextButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
-                updateQuestion();
+                if(mCurrentIndex == (mQuestionBank.length-1)){
+                    mCurrentIndex = 0;
+                    updateQuestion();
+                } else {
+                    mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+                    updateQuestion();
+                }
             }
         });
     }
 
     private void updateQuestion(){
-        int question = mQuestionBank[mCurrentIndex].getTextResId();
+        int question = mQuestionBank[Math.abs(mCurrentIndex)].getTextResId();
         mQuestionTextView.setText(question);
     }
 
